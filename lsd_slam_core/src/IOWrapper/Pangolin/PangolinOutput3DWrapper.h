@@ -8,51 +8,55 @@
 #ifndef PANGOLINOUTPUT3DWRAPPER_H_
 #define PANGOLINOUTPUT3DWRAPPER_H_
 
+#include "GUI.h"
 #include "IOWrapper/Output3DWrapper.h"
 #include "Keyframe.h"
-#include "GUI.h"
 
-namespace lsd_slam
-{
+namespace lsd_slam {
 
 class Frame;
 class KeyFrameGraph;
 
-struct GraphConstraint
-{
-    int from;
-    int to;
-    float err;
+struct GraphConstraint {
+  int from;
+  int to;
+  float err;
 };
 
-class PangolinOutput3DWrapper : public Output3DWrapper
-{
-    public:
-        PangolinOutput3DWrapper(int width, int height, GUI & gui);
-        virtual ~PangolinOutput3DWrapper();
+class PangolinOutput3DWrapper : public Output3DWrapper {
+ public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-        virtual void publishKeyframeGraph(KeyFrameGraph* graph);
+  PangolinOutput3DWrapper(int width, int height, GUI& gui);
+  virtual ~PangolinOutput3DWrapper();
 
-        // publishes a keyframe. if that frame already existis, it is overwritten, otherwise it is added.
-        virtual void publishKeyframe(Frame* f);
+  virtual void publishKeyframeGraph(KeyFrameGraph* graph);
 
-        virtual void updateImage(unsigned char * data);
+  // publishes a keyframe. if that frame already existis, it is overwritten,
+  // otherwise it is added.
+  virtual void publishKeyframe(Frame* f);
 
-        // published a tracked frame that did not become a keyframe (i.e. has no depth data)
-        virtual void publishTrackedFrame(Frame* f);
+  virtual void updateImage(unsigned char* data);
 
-        // publishes graph and all constraints, as well as updated KF poses.
-        virtual void publishTrajectory(std::vector<Eigen::Matrix<float, 3, 1>> trajectory, std::string identifier);
+  // published a tracked frame that did not become a keyframe (i.e. has no depth
+  // data)
+  virtual void publishTrackedFrame(Frame* f);
 
-        virtual void publishTrajectoryIncrement(Eigen::Matrix<float, 3, 1> pt, std::string identifier);
+  // publishes graph and all constraints, as well as updated KF poses.
+  virtual void publishTrajectory(
+      std::vector<Eigen::Matrix<float, 3, 1>> trajectory,
+      std::string identifier);
 
-        virtual void publishDebugInfo(Eigen::Matrix<float, 20, 1> data);
+  virtual void publishTrajectoryIncrement(Eigen::Matrix<float, 3, 1> pt,
+                                          std::string identifier);
 
-        int publishLvl;
+  virtual void publishDebugInfo(Eigen::Matrix<float, 20, 1> data);
 
-    private:
-        int width, height;
-        GUI & gui;
+  int publishLvl;
+
+ private:
+  int width, height;
+  GUI& gui;
 };
 }
 

@@ -1,8 +1,9 @@
 /**
 * This file is part of LSD-SLAM.
 *
-* Copyright 2013 Jakob Engel <engelj at in dot tum dot de> (Technical University of Munich)
-* For more information see <http://vision.in.tum.de/lsdslam> 
+* Copyright 2013 Jakob Engel <engelj at in dot tum dot de> (Technical University
+* of Munich)
+* For more information see <http://vision.in.tum.de/lsdslam>
 *
 * LSD-SLAM is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,78 +21,68 @@
 
 #pragma once
 
-#include <iostream>
-#include <fstream>
 #include <chrono>
+#include <fstream>
+#include <iostream>
 
-#include "IOWrapper/Timestamp.h"
 #include "IOWrapper/NotifyBuffer.h"
+#include "IOWrapper/Timestamp.h"
 #include "IOWrapper/TimestampedObject.h"
 #include "util/SophusUtil.h"
 
 namespace cv {
-	class Mat;
+class Mat;
 }
 
-
-
-namespace lsd_slam
-{
+namespace lsd_slam {
 
 class SlamSystem;
 class InputImageStream;
 class Output3DWrapper;
 
+struct LiveSLAMWrapper : public Notifiable {
+ public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-struct LiveSLAMWrapper : public Notifiable
-{
-public:
-	LiveSLAMWrapper(InputImageStream* imageStream, Output3DWrapper* outputWrapper);
+  LiveSLAMWrapper(InputImageStream* imageStream,
+                  Output3DWrapper* outputWrapper);
 
-	/** Destructor. */
-	~LiveSLAMWrapper();
-	
-	
-	/** Runs the main processing loop. Will never return. */
-	void Loop();
-	
-	/** Requests a reset from a different thread. */
-	void requestReset();
-	
-	/** Resets everything, starting the odometry from the beginning again. */
-	void resetAll();
+  /** Destructor. */
+  ~LiveSLAMWrapper();
 
-	/** Callback function for new RGB images. */
-	void newImageCallback(const cv::Mat& img, Timestamp imgTime);
+  /** Runs the main processing loop. Will never return. */
+  void Loop();
 
-	/** Writes the given time and pose to the outFile. */
-	void logCameraPose(const SE3& camToWorld, double time);
-	
-	
-	inline SlamSystem* getSlamSystem() {return monoOdometry;}
-	
-private:
-	
-	InputImageStream* imageStream;
-	Output3DWrapper* outputWrapper;
+  /** Requests a reset from a different thread. */
+  void requestReset();
 
-	// initialization stuff
-	bool isInitialized;
+  /** Resets everything, starting the odometry from the beginning again. */
+  void resetAll();
 
+  /** Callback function for new RGB images. */
+  void newImageCallback(const cv::Mat& img, Timestamp imgTime);
 
+  /** Writes the given time and pose to the outFile. */
+  void logCameraPose(const SE3& camToWorld, double time);
 
-	// monoOdometry
-	SlamSystem* monoOdometry;
+  inline SlamSystem* getSlamSystem() { return monoOdometry; }
 
-	std::string outFileName;
-	std::ofstream* outFile;
-	
-	float fx, fy, cx, cy;
-	int width, height;
+ private:
+  InputImageStream* imageStream;
+  Output3DWrapper* outputWrapper;
 
+  // initialization stuff
+  bool isInitialized;
 
-	int imageSeqNumber;
+  // monoOdometry
+  SlamSystem* monoOdometry;
 
+  std::string outFileName;
+  std::ofstream* outFile;
+
+  float fx, fy, cx, cy;
+  int width, height;
+
+  int imageSeqNumber;
 };
-
 }

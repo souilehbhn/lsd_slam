@@ -10,62 +10,62 @@
 
 #define GLM_FORCE_RADIANS
 
+#include <pangolin/gl/gl.h>
+#include <pangolin/gl/gldraw.h>
 #include <pangolin/pangolin.h>
-#include <pangolin/gl.h>
-#include <pangolin/gldraw.h>
-#include <map>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "util/Resolution.h"
-#include "util/Intrinsics.h"
-#include "IOWrapper/Pangolin/Keyframe.h"
-#include "util/ThreadMutexObject.h"
+#include <map>
 #include "DataStructures/Frame.h"
+#include "IOWrapper/Pangolin/Keyframe.h"
+#include "util/Intrinsics.h"
+#include "util/Resolution.h"
+#include "util/ThreadMutexObject.h"
 
 #define GL_GPU_MEM_INFO_CURRENT_AVAILABLE_MEM_NVX 0x9049
 
-class GUI
-{
-    public:
-        GUI();
+class GUI {
+ public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-        virtual ~GUI();
+  GUI();
 
-        void initImages();
+  virtual ~GUI();
 
-        void preCall();
+  void initImages();
 
-        void drawFrustum();
+  void preCall();
 
-        void postCall();
+  void drawFrustum();
 
-        void addKeyframe(Keyframe * newFrame);
+  void postCall();
 
-        void updateImage(unsigned char * data);
+  void addKeyframe(Keyframe* newFrame);
 
-        void updateKeyframePoses(GraphFramePose* framePoseData, int num);
+  void updateImage(unsigned char* data);
 
-        void drawKeyframes();
+  void updateKeyframePoses(GraphFramePose* framePoseData, int num);
 
-        void drawImages();
+  void drawKeyframes();
 
-        ThreadMutexObject<Sophus::Sim3f> pose;
+  void drawImages();
 
-    private:
-        void drawGrid();
+  ThreadMutexObject<Sophus::Sim3f> pose;
 
-        pangolin::GlTexture * depthImg;
+ private:
+  void drawGrid();
 
-        ThreadMutexObject<unsigned char * > depthImgBuffer;
+  pangolin::GlTexture* depthImg;
 
-        pangolin::Var<int> * gpuMem;
+  ThreadMutexObject<unsigned char*> depthImgBuffer;
 
-        pangolin::Var<std::string> * totalPoints;
+  pangolin::Var<int>* gpuMem;
 
-        pangolin::OpenGlRenderState s_cam;
+  pangolin::Var<std::string>* totalPoints;
 
-        ThreadMutexObject<std::map<int, Keyframe *> > keyframes;
+  pangolin::OpenGlRenderState s_cam;
+
+  ThreadMutexObject<std::map<int, Keyframe*> > keyframes;
 };
-
 
 #endif /* GUI_H_ */
