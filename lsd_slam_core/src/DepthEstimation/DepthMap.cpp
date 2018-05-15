@@ -627,7 +627,6 @@ void DepthMap::regularizeDepthMapFillHolesRow(int yMin, int yMax,
            val > VAL_SUM_MIN_FOR_CREATE) ||
           val > VAL_SUM_MIN_FOR_UNBLACKLIST) {
         float sumIdepthObs = 0, sumIVarObs = 0;
-        int num = 0;
 
         DepthMapPixelHypothesis* s1max =
             otherDepthMap + (x - 2) + (y + 3) * width;
@@ -640,7 +639,6 @@ void DepthMap::regularizeDepthMapFillHolesRow(int yMin, int yMax,
 
             sumIdepthObs += source->idepth / source->idepth_var;
             sumIVarObs += 1.0f / source->idepth_var;
-            num++;
           }
 
         float idepthObs = sumIdepthObs / sumIVarObs;
@@ -1356,18 +1354,6 @@ inline float DepthMap::doLineStereo(
 
   float rescaleFactor = pReal[2] * prior_idepth;
 
-  float firstX = u - 2 * epxn * rescaleFactor;
-  float firstY = v - 2 * epyn * rescaleFactor;
-  float lastX = u + 2 * epxn * rescaleFactor;
-  float lastY = v + 2 * epyn * rescaleFactor;
-  // width - 2 and height - 2 comes from the one-sided gradient calculation at
-  // the bottom
-  if (firstX <= 0 || firstX >= width - 2 || firstY <= 0 ||
-      firstY >= height - 2 || lastX <= 0 || lastX >= width - 2 || lastY <= 0 ||
-      lastY >= height - 2) {
-    return -1;
-  }
-
   if (!(rescaleFactor > 0.7f && rescaleFactor < 1.4f)) {
     if (enablePrintDebugInfo) stats->num_stereo_rescale_oob++;
     return -1;
@@ -1826,7 +1812,7 @@ inline float DepthMap::doLineStereo(
     if (rand() % 5 == 0) {
       // if(rand()%500 == 0)
       //	printf("geo: %f, photo: %f, alpha: %f\n", sqrt(geoDispError),
-      //sqrt(photoDispError), alpha, sqrt(result_var));
+      // sqrt(photoDispError), alpha, sqrt(result_var));
 
       // int idDiff = (keyFrame->pyramidID - referenceFrame->id);
       // cv::Scalar color = cv::Scalar(0,0, 2*idDiff);// bw
@@ -1835,15 +1821,15 @@ inline float DepthMap::doLineStereo(
       // 255-sqrt(result_var)*2000, 0);// bw
 
       //			float eplLengthF =
-      //std::min((float)MIN_EPL_LENGTH_CROP,(float)eplLength);
+      // std::min((float)MIN_EPL_LENGTH_CROP,(float)eplLength);
       //			eplLengthF =
-      //std::max((float)MAX_EPL_LENGTH_CROP,(float)eplLengthF);
+      // std::max((float)MAX_EPL_LENGTH_CROP,(float)eplLengthF);
       //
       //			float pixelDistFound =
-      //sqrtf((float)((pReal[0]/pReal[2] - best_match_x)*(pReal[0]/pReal[2] -
-      //best_match_x)
+      // sqrtf((float)((pReal[0]/pReal[2] - best_match_x)*(pReal[0]/pReal[2] -
+      // best_match_x)
       //					+ (pReal[1]/pReal[2] -
-      //best_match_y)*(pReal[1]/pReal[2] - best_match_y)));
+      // best_match_y)*(pReal[1]/pReal[2] - best_match_y)));
       //
       float fac = best_match_err /
                   ((float)MAX_ERROR_STEREO + sqrtf(gradAlongLine) * 20);
