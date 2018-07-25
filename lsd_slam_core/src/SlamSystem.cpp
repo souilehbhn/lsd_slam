@@ -699,6 +699,8 @@ void SlamSystem::takeRelocalizeResult() {
 }
 
 bool SlamSystem::doMappingIteration() {
+  //  auto start_time = boost::posix_time::microsec_clock::universal_time();
+
   if (currentKeyFrame == 0) return false;
 
   if (!doMapping && currentKeyFrame->idxInKeyframes < 0) {
@@ -746,6 +748,12 @@ bool SlamSystem::doMappingIteration() {
       if (!didSomething) return false;
     }
 
+    //    std::cout << "Mapping processing time: "
+    //              << (boost::posix_time::microsec_clock::universal_time() -
+    //                  start_time)
+    //                     .total_milliseconds()
+    //              << "ms" << std::endl;
+
     return true;
   } else {
     // invalidate map if it was valid.
@@ -763,6 +771,12 @@ bool SlamSystem::doMappingIteration() {
 
     // did we find a frame to relocalize with?
     if (relocalizer.waitResult(50)) takeRelocalizeResult();
+
+    //    std::cout << "Mapping processing time: "
+    //              << (boost::posix_time::microsec_clock::universal_time() -
+    //                  start_time)
+    //                     .total_milliseconds()
+    //              << "ms" << std::endl;
 
     return true;
   }
