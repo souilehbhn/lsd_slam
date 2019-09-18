@@ -34,8 +34,8 @@ bool autoRunWithinFrame = true;
 
 int debugDisplay = 0;
 
-bool onSceenInfoDisplay = true;
-bool displayDepthMap = true;
+bool onSceenInfoDisplay = false;//<-----
+bool displayDepthMap = false;//<------
 bool dumpMap = false;
 bool doFullReConstraintTrack = false;
 
@@ -48,7 +48,7 @@ bool printRegularizeStatistics = false;
 bool printLineStereoStatistics = false;
 bool printLineStereoFails = false;
 
-bool printTrackingIterationInfo = false;
+bool printTrackingIterationInfo = false; //<------
 
 bool printFrameBuildDebugInfo = false;
 bool printMemoryDebugInfo = false;
@@ -59,8 +59,8 @@ bool printOptimizationInfo = false;
 bool printRelocalizationInfo = false;
 
 bool printThreadingInfo = false;
-bool printMappingTiming = false;
-bool printOverallTiming = false;
+bool printMappingTiming = true;
+bool printOverallTiming = true;
 
 bool plotTrackingIterationInfo = false;
 bool plotSim3TrackingIterationInfo = false;
@@ -84,7 +84,7 @@ float depthSmoothingFactor = 1;
 bool allowNegativeIdepths = true;
 bool useMotionModel = false;
 bool useSubpixelStereo = true;
-bool multiThreading = true;
+bool multiThreading = false;
 bool useAffineLightningEstimation = true;
 
 

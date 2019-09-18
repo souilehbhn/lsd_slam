@@ -43,7 +43,7 @@
 std::vector<std::string> files;
 int w, h, w_inp, h_inp;
 ThreadMutexObject<bool> lsdDone(false);
-GUI gui;
+//GUI gui;
 RawLogReader * logReader = 0;
 int numFrames = 0;
 
@@ -189,7 +189,7 @@ void run(SlamSystem * system, Undistorter* undistorter, Output3DWrapper* outputW
             system->trackFrame(image.data, runningIDX, hz == 0, fakeTimeStamp);
         }
 
-        gui.pose.assignValue(system->getCurrentPoseEstimateScale());
+        //gui.pose.assignValue(system->getCurrentPoseEstimateScale());
 
         runningIDX++;
         fakeTimeStamp+=0.03;
@@ -244,9 +244,9 @@ int main( int argc, char** argv )
 	Resolution::getInstance(w, h);
 	Intrinsics::getInstance(fx, fy, cx, cy);
 
-	gui.initImages();
+	//gui.initImages();
 
-	Output3DWrapper* outputWrapper = new PangolinOutput3DWrapper(w, h, gui);
+	Output3DWrapper* outputWrapper = 0 /*new PangolinOutput3DWrapper(w, h, gui)*/;
 
 	// make slam system
 	SlamSystem * system = new SlamSystem(w, h, K, doSlam);
@@ -290,14 +290,87 @@ int main( int argc, char** argv )
         numFrames = (int)files.size();
     }
 
-	boost::thread lsdThread(run, system, undistorter, outputWrapper, K);
+	//boost::thread lsdThread(run, system, undistorter, outputWrapper, K);
 
-	while(!pangolin::ShouldQuit())
+
+    // get HZ
+        double hz = 30;
+
+        cv::Mat image = cv::Mat(h, w, CV_8U);
+        int runningIDX=0;
+        float fakeTimeStamp = 0;
+
+        for(unsigned int i = 0; i < numFrames; i++)
+        {
+            if(lsdDone.getValue())
+                break;
+
+            cv::Mat imageDist = cv::Mat(h, w, CV_8U);
+
+            if(logReader)
+            {
+                logReader->getNext();
+
+                cv::Mat3b img(h, w, (cv::Vec3b *)logReader->rgb);
+
+                cv::cvtColor(img, imageDist, CV_RGB2GRAY);
+            }
+            else
+            {
+                imageDist = cv::imread(files[i], CV_LOAD_IMAGE_GRAYSCALE);
+
+                if(imageDist.rows != h_inp || imageDist.cols != w_inp)
+                {
+                    if(imageDist.rows * imageDist.cols == 0)
+                        printf("failed to load image %s! skipping.\n", files[i].c_str());
+                    else
+                        printf("image %s has wrong dimensions - expecting %d x %d, found %d x %d. Skipping.\n",
+                                files[i].c_str(),
+                                w,h,imageDist.cols, imageDist.rows);
+                    continue;
+                }
+            }
+
+            assert(imageDist.type() == CV_8U);
+
+            undistorter->undistort(imageDist, image);
+
+            assert(image.type() == CV_8U);
+
+            if(runningIDX == 0)
+            {
+                system->randomInit(image.data, fakeTimeStamp, runningIDX);
+            }
+            else
+            {
+                system->trackFrame(image.data, runningIDX, hz == 0, fakeTimeStamp);
+            }
+
+            //gui.pose.assignValue(system->getCurrentPoseEstimateScale());
+
+            runningIDX++;
+            fakeTimeStamp+=0.03;
+
+            if(fullResetRequested)
+            {
+                printf("FULL RESET!\n");
+                delete system;
+
+                system = new SlamSystem(w, h, K, doSlam);
+                system->setVisualization(outputWrapper);
+
+                fullResetRequested = false;
+                runningIDX = 0;
+            }
+        }
+
+
+/*	while(!pangolin::ShouldQuit())
 	{
 	    if(lsdDone.getValue() && !system->finalized)
-	    {
+	    {*/
 	        system->finalize();
-	    }
+/*	    }
 
 	    gui.preCall();
 
@@ -308,11 +381,11 @@ int main( int argc, char** argv )
 	    gui.drawImages();
 
 	    gui.postCall();
-	}
+	}*/
 
 	lsdDone.assignValue(true);
 
-	lsdThread.join();
+	//lsdThread.join();
 
 	delete system;
 	delete undistorter;
