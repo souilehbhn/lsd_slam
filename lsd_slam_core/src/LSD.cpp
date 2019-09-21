@@ -25,7 +25,7 @@
 #include "util/Parse.h"
 #include "util/globalFuncs.h"
 #include "util/ThreadMutexObject.h"
-#include "IOWrapper/Pangolin/PangolinOutput3DWrapper.h"
+//#include "IOWrapper/Pangolin/PangolinOutput3DWrapper.h"
 #include "SlamSystem.h"
 
 #include <sstream>
@@ -38,12 +38,10 @@
 
 #include "opencv2/opencv.hpp"
 
-#include "GUI.h"
 
 std::vector<std::string> files;
 int w, h, w_inp, h_inp;
 ThreadMutexObject<bool> lsdDone(false);
-//GUI gui;
 RawLogReader * logReader = 0;
 int numFrames = 0;
 
@@ -189,7 +187,6 @@ void run(SlamSystem * system, Undistorter* undistorter, Output3DWrapper* outputW
             system->trackFrame(image.data, runningIDX, hz == 0, fakeTimeStamp);
         }
 
-        //gui.pose.assignValue(system->getCurrentPoseEstimateScale());
 
         runningIDX++;
         fakeTimeStamp+=0.03;
@@ -242,9 +239,8 @@ int main( int argc, char** argv )
 	K << fx, 0.0, cx, 0.0, fy, cy, 0.0, 0.0, 1.0;
 
 	Resolution::getInstance(w, h);
-	Intrinsics::getInstance(fx, fy, cx, cy);
+	//Intrinsics::getInstance(fx, fy, cx, cy);
 
-	//gui.initImages();
 
 	Output3DWrapper* outputWrapper = 0 /*new PangolinOutput3DWrapper(w, h, gui)*/;
 
@@ -290,7 +286,6 @@ int main( int argc, char** argv )
         numFrames = (int)files.size();
     }
 
-	//boost::thread lsdThread(run, system, undistorter, outputWrapper, K);
 
 
     // get HZ
@@ -346,7 +341,6 @@ int main( int argc, char** argv )
                 system->trackFrame(image.data, runningIDX, hz == 0, fakeTimeStamp);
             }
 
-            //gui.pose.assignValue(system->getCurrentPoseEstimateScale());
 
             runningIDX++;
             fakeTimeStamp+=0.03;
@@ -365,27 +359,10 @@ int main( int argc, char** argv )
         }
 
 
-/*	while(!pangolin::ShouldQuit())
-	{
-	    if(lsdDone.getValue() && !system->finalized)
-	    {*/
 	        system->finalize();
-/*	    }
-
-	    gui.preCall();
-
-	    gui.drawKeyframes();
-
-	    gui.drawFrustum();
-
-	    gui.drawImages();
-
-	    gui.postCall();
-	}*/
 
 	lsdDone.assignValue(true);
 
-	//lsdThread.join();
 
 	delete system;
 	delete undistorter;

@@ -34,7 +34,6 @@ set(lsd_SOURCE_FILES
   ${PROJECT_SOURCE_DIR}/DataStructures/FramePoseStruct.cpp
   ${PROJECT_SOURCE_DIR}/DataStructures/FrameMemory.cpp
   ${PROJECT_SOURCE_DIR}/SlamSystem.cpp
-  ${PROJECT_SOURCE_DIR}/GUI.cpp
   ${PROJECT_SOURCE_DIR}/LiveSLAMWrapper.cpp
   ${PROJECT_SOURCE_DIR}/DepthEstimation/DepthMap.cpp
   ${PROJECT_SOURCE_DIR}/DepthEstimation/DepthMapPixelHypothesis.cpp
@@ -57,7 +56,7 @@ set(lsd_SOURCE_FILES
 set(SOURCE_FILES
   ${lsd_SOURCE_FILES}
   ${PROJECT_SOURCE_DIR}/IOWrapper/OpenCV/ImageDisplay_OpenCV.cpp
-  ${PROJECT_SOURCE_DIR}/IOWrapper/Pangolin/PangolinOutput3DWrapper.cpp
+  #${PROJECT_SOURCE_DIR}/IOWrapper/Pangolin/PangolinOutput3DWrapper.cpp
 )
 
 include_directories(
